@@ -1,0 +1,9 @@
+{
+  "name": "Caly",
+  "description": "calendar",
+  "dependencies": {
+    "react": "~0.13.3",
+    "moment": "~2.10.3"
+  },
+  "devDependencies": {}
+}
