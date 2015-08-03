@@ -7,7 +7,7 @@ var MainView = require('./components/main_view.js');
 
 
 Constants.MONTH_NAMES = "JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC".split(" ");
-Constants.DAY_NAMES = "mon tues wed thurs fri sat sun".split(" ");
+Constants.DAY_NAMES = "sun mon tues wed thurs fri sat".split(" ");
 
 
 

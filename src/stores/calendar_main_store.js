@@ -1,12 +1,14 @@
 /* *** MOST LOGIC IS HERE *** */
 
-var CalendarDispatcher = require('../dispatchers/flux_dispatcher.js');
+//var CalendarDispatcher = require('../dispatchers/flux_dispatcher.js');
 var Constants = require('../components/constants.js');
-var assign = require('react/lib/Object.assign');
-var EventEmitter = require('events').EventEmitter; //node's event EventEmitter
+//var assign = require('react/lib/Object.assign');
+//var EventEmitter = require('events').EventEmitter; //node's event EventEmitter
 var CalendarLib = require('calendar').Calendar; //Generate Dates
 var moment = require('moment'); //momentjs
-
+//var DataStore = require('./calendar_data_store.js');
+var Reflux = require('reflux');
+var CalendarControlActions = require('../actions/calendar_control_actions.js')
 
 
 
@@ -18,8 +20,6 @@ var _monthNames = "JAN FEB MAR APR MAY JUN JUL AUG SEP OCT NOV DEC".split(" ");
 var _dayNames = "mon tues wed thurs fri sat sun".split(" ");
 //console.log("Module HERE", CalendarLib, _cal.weekStartDate(_initDate));
 
-
-var CHANGE_EVENT = 'change';
 
 /* = STATE ------------------------------------------------------------------ */
 var currentYear;
@@ -33,6 +33,11 @@ var currentView; //'month'|'week'|'day'
 
 
 /* = My functions to get ajaxed data ---------------------------------------- */
+function _getCurrentView () {
+    var view = (currentView)?  currentView : Constants.MONTH_VIEW;
+    return view;
+  }
+
 function _getDayStateCounts (day) {
   console.log("STATE COUNTS FOR ", day)
 }
@@ -83,79 +88,103 @@ function _getCurrentMonthData () {
   }
 }
 
-
-
-/* = Calendar Store --------------------------------------------------------- */
-var CalendarMainStore = assign(EventEmitter.prototype, {
-  emitChange: function () {
-    this.emit(CHANGE_EVENT)
-  },
-
-  addChangeListener: function (callback) {
-    this.on(CHANGE_EVENT, callback)
-  },
-
-  removeChangeListener: function (callback) {
-    this.removeListener(CHANGE_EVENT, callback)
-  },
-
-  getCurrentView: function () {
-    var view = (currentView)?  currentView : Constants.MONTH_VIEW;
-    return view;
-  },
-
-  getCurrentYear: function () {
-    return _getCurrentYear;
-  },
-
-  getCurrentMonthData: function () {
-    return _getCurrentMonthData();
-  },
-
-  getAppState: function () {
+function _getAppState () {
     return  {
-      view: this.getCurrentView(),
+      view: _getCurrentView(),
       month: _getCurrentMonthData(),
       year: _getCurrentYear(),
       today: _mDate
     }
+  }
+
+
+/* = Calendar Store --------------------------------------------------------- */
+var CalendarMainStore = Reflux.createStore({
+  listenables: [CalendarControlActions],
+  getInitialState: function () {
+    return _getAppState();
   },
 
-  getDayStateCounts: function () {
-    return _getDayStateCounts;
+  onNextMonth: function () {
+    _setCurrentMonthData(++currentMonthIndex);
+    this.trigger(_getAppState());
   },
 
-  getMonth: function (index) {
-    return _getMonthData;
-  },
-
-  dispatcherIndex: CalendarDispatcher.register(function(payload) {
-    var action = payload.action;
-
-    switch (action.actionType) {
-      case Constants.GET_DAY_POSTS:
-        _getDayPosts(action.day);
-        break;
-      case Constants.GET_DAY_STATE_COUNTS:
-        _getDayStateCounts(action.day);
-        break;
-      case Constants.NEXT_MONTH:
-        console.log("triggered Next Month", action);
-        _setCurrentMonthData(++action.currentMonth);
-        break;
-      case Constants.PREV_MONTH:
-        console.log("triggered Prev Month", action);
-        _setCurrentMonthData(--action.currentMonth);
-        break;
-      default:
-        console.log("action was ", action.actionType);
-    }
-
-    CalendarMainStore.emitChange();
-    return true;
-  })
-
+  onPrevtMonth: function () {
+    _setCurrentMonthData(--currentMonthIndex);
+    this.trigger(_getAppState());
+  }
 });
+// var CalendarMainStore = assign(EventEmitter.prototype, {
+//   emitChange: function () {
+//     this.emit(CHANGE_EVENT)
+//   },
+//
+//   addChangeListener: function (callback) {
+//     this.on(CHANGE_EVENT, callback)
+//   },
+//
+//   removeChangeListener: function (callback) {
+//     this.removeListener(CHANGE_EVENT, callback)
+//   },
+//
+//   getCurrentView: function () {
+//     var view = (currentView)?  currentView : Constants.MONTH_VIEW;
+//     return view;
+//   },
+//
+//   getCurrentYear: function () {
+//     return _getCurrentYear;
+//   },
+//
+//   getCurrentMonthData: function () {
+//     return _getCurrentMonthData();
+//   },
+//
+//   getAppState: function () {
+//     return  {
+//       view: this.getCurrentView(),
+//       month: _getCurrentMonthData(),
+//       year: _getCurrentYear(),
+//       today: _mDate
+//     }
+//   },
+//
+//   getDayStateCounts: function () {
+//     return _getDayStateCounts;
+//   },
+//
+//   getMonth: function (index) {
+//     return _getMonthData;
+//   },
+//
+//   dispatcherIndex: CalendarDispatcher.register(function(payload) {
+//     var action = payload.action;
+//
+//     switch (action.actionType) {
+//       case Constants.GET_DAY_POSTS:
+//         _getDayPosts(action.day);
+//         break;
+//       case Constants.GET_DAY_STATE_COUNTS:
+//         _getDayStateCounts(action.day);
+//         break;
+//       case Constants.NEXT_MONTH:
+//         console.log("triggered Next Month", action);
+//         _setCurrentMonthData(++action.currentMonth);
+//         break;
+//       case Constants.PREV_MONTH:
+//         console.log("triggered Prev Month", action);
+//         _setCurrentMonthData(--action.currentMonth);
+//         break;
+//       default:
+//         console.log("action was ", action.actionType);
+//     }
+//
+//     CalendarMainStore.emitChange();
+//     return true;
+//   })
+//
+// });
 
 
 module.exports = CalendarMainStore;

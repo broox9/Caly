@@ -13,7 +13,6 @@ var MainView = React.createClass({
       <div id="caly">
         <Controls />
         <DayHeader />
-        <MonthView />
       </div>
     )
   }

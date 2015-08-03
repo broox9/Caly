@@ -12,7 +12,7 @@ var MonthViewCell = React.createClass({
     var today = this.props.today;
     if (today.isBefore(d)) {
       timeclass="calendar-future-date"
-    } else if (today.isSame(d)) {
+    } else if (today.isSame(d, 'day')) {
       timeclass="calendar-today"
     }
     return timeclass
@@ -20,7 +20,7 @@ var MonthViewCell = React.createClass({
 
   render: function () {
     var this_date = this.props.date.getDate();
-    var timeClass = this._timeClass(this_date);
+    var timeClass = this._timeClass(this.props.date);
     return (
       <td data-date={this_date} data-row={this.props.rowNumber} className={timeClass} key={this.props.key} onClick={this.getDayData}>
         <span className="date-number">{this_date}</span>

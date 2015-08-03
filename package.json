@@ -10,7 +10,18 @@
     "bower": "^1.4.1",
     "flux": "^2.0.3",
     "node-static": "^0.7.7",
+    "react-tools": "^0.13.3",
     "reactify": "^1.1.1",
+    "reflux": "^0.2.11",
     "watchify": "^3.3.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "scriptPreprocessor": "src/__tests__/transform.js",
+    "unmockedModulePathPatterns": [
+      "node_modules/react"
+    ]
   }
 }

@@ -53,6 +53,24 @@ html, body {
 
 }
 
+.caly-month-view td.calendar-today {
+  background-color: #fff;
+}
+
+.caly-month-view td.calendar-past-date {
+  background-color: #fefefe;
+}
+
+.caly-month-view td.calendar-future-date {
+  background-color: #fefefe;
+}
+
+.caly-month-view td.calendar-past-date .date-number {
+  color: #aaa;
+}
+
+
+
 .caly-month-view td .date-number {
   position: absolute;
   font-size: 0.75em;

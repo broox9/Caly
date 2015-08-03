@@ -1,31 +1,28 @@
 var React = require("React");
-var CalendarActions = require('../../actions/calendar_actions.js');
+var Reflux = require("reflux");
+var CalendarControlActions = require('../../actions/calendar_control_actions.js');
 var CalendarStore = require('../../stores/calendar_main_store.js');
 
-function _getAppState() {
-  return CalendarStore.getAppState();
-}
+
 
 var Controls = React.createClass({
+  mixins: [Reflux.connect(CalendarStore)],
+
   handlePrevClick: function () {
-    CalendarActions.prevMonth(this.state.month.index)
+    CalendarControlActions.prevMonth()
   },
 
   handleNextClick: function () {
-    CalendarActions.nextMonth(this.state.month.index)
+    CalendarControlActions.nextMonth();
   },
 
   _onChange: function () {
     this.setState(CalendarStore.getAppState())
   },
 
-  getInitialState: function () {
-    return _getAppState();
-  },
-
   componentWillMount: function () {
     //initial listenter set up
-    CalendarStore.addChangeListener(this._onChange);
+    //CalendarStore.addChangeListener(this._onChange);
   },
   render: function () {
     return (
